@@ -1,85 +1,82 @@
-// Copyright (c) HashiCorp, Inc.
-// SPDX-License-Identifier: MPL-2.0
-
 package provider
 
 import (
 	"context"
-	"net/http"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// Ensure ScaffoldingProvider satisfies various provider interfaces.
-var _ provider.Provider = &ScaffoldingProvider{}
-
-// ScaffoldingProvider defines the provider implementation.
-type ScaffoldingProvider struct {
-	// version is set to the provider version on release, "dev" when the
-	// provider is built and ran locally, and "test" when running acceptance
-	// testing.
-	version string
+type sodiumProvider struct {
 }
 
-// ScaffoldingProviderModel describes the provider data model.
-type ScaffoldingProviderModel struct {
-	Endpoint types.String `tfsdk:"endpoint"`
+// Enforce interfaces we want provider to implement.
+var _ provider.Provider = (*sodiumProvider)(nil)
+
+func New() provider.Provider {
+	return &sodiumProvider{}
 }
 
-func (p *ScaffoldingProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "scaffolding"
-	resp.Version = p.version
+func (p *sodiumProvider) resetConfig() {
+
 }
 
-func (p *ScaffoldingProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (p *sodiumProvider) Metadata(_ context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "sodium"
+}
+
+func (p *sodiumProvider) Schema(_ context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"endpoint": schema.StringAttribute{
-				MarkdownDescription: "Example provider attribute",
-				Optional:            true,
-			},
-		},
+		MarkdownDescription: "Provider configuration",
 	}
 }
 
-func (p *ScaffoldingProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	var data ScaffoldingProviderModel
+func (p *sodiumProvider) Configure(ctx context.Context, req provider.ConfigureRequest, res *provider.ConfigureResponse) {
+	tflog.Debug(ctx, "Configuring provider")
+	p.resetConfig()
 
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Configuration values are now available.
-	// if data.Endpoint.IsNull() { /* ... */ }
-
-	// Example client configuration for data sources and resources
-	client := http.DefaultClient
-	resp.DataSourceData = client
-	resp.ResourceData = client
+	// Since the provider instance is being passed, ensure these response
+	// values are always set before early returns, etc.
+	res.DataSourceData = p
+	res.ResourceData = p
 }
 
-func (p *ScaffoldingProvider) Resources(ctx context.Context) []func() resource.Resource {
+func (p *sodiumProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewExampleResource,
+		NewKeyPairResource,
 	}
 }
 
-func (p *ScaffoldingProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+func (p *sodiumProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewExampleDataSource,
 	}
 }
 
-func New(version string) func() provider.Provider {
-	return func() provider.Provider {
-		return &ScaffoldingProvider{
-			version: version,
-		}
+// toProvider can be used to cast a generic provider.Provider reference to this specific provider.
+// This is ideally used in DataSourceType.NewDataSource and ResourceType.NewResource calls.
+func toProvider(in any) (*sodiumProvider, diag.Diagnostics) {
+	if in == nil {
+		return nil, nil
 	}
+
+	var diags diag.Diagnostics
+
+	p, ok := in.(*sodiumProvider)
+
+	if !ok {
+		diags.AddError(
+			"Unexpected Provider Instance Type",
+			fmt.Sprintf("While creating the data source or resource, an unexpected provider type (%T) was received. "+
+				"This is always a bug in the provider code and should be reported to the provider developers.", in,
+			),
+		)
+		return nil, diags
+	}
+
+	return p, diags
 }

@@ -1,6 +1,6 @@
-module github.com/hashicorp/terraform-provider-scaffolding-framework
+module github.com/alchemy/terraform-provider-sodium
 
-go 1.19
+go 1.20
 
 require (
 	github.com/hashicorp/terraform-plugin-docs v0.16.0
@@ -44,6 +44,7 @@ require (
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.15 // indirect
+	github.com/jamesruan/sodium v1.0.14 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mitchellh/cli v1.1.5 // indirect
