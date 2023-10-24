@@ -37,6 +37,14 @@ func (r *keyPairResource) Schema(_ context.Context, req resource.SchemaRequest, 
 		Version: 0,
 		Attributes: map[string]schema.Attribute{
 			// Computed attributes
+			"id": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+				MarkdownDescription: "ID of the resource (public key).",
+			},
+
 			"secret_key": schema.StringAttribute{
 				Computed:  true,
 				Sensitive: true,
