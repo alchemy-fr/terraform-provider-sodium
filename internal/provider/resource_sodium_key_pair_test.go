@@ -19,12 +19,6 @@ func TestAccExampleResource(t *testing.T) {
 				Config: testAccExampleResourceConfig("one"),
 				Check:  resource.ComposeAggregateTestCheckFunc(),
 			},
-			// ImportState testing
-			{
-				ResourceName:      "sodium_key_pair.test",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 			// Update and Read testing
 			{
 				Config: testAccExampleResourceConfig("two"),

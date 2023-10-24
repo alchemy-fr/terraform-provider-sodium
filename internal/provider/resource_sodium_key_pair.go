@@ -117,10 +117,6 @@ func (r *keyPairResource) Delete(ctx context.Context, _ resource.DeleteRequest, 
 	tflog.Debug(ctx, "Removing key pair from state")
 }
 
-func (r *keyPairResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
-}
-
 type keyPairResourceModel struct {
 	SecretKey types.String `tfsdk:"secret_key"`
 	PublicKey types.String `tfsdk:"public_key"`
