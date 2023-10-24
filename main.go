@@ -11,7 +11,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 
-	"github.com/alchemy/terraform-provider-sodium/provider"
+	"github.com/alchemy-fr/terraform-provider-sodium/provider"
 )
 
 func main() {

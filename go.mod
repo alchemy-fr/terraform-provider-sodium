@@ -1,4 +1,4 @@
-module github.com/alchemy/terraform-provider-sodium
+module github.com/alchemy-fr/terraform-provider-sodium
 
 go 1.20
 
