@@ -1,19 +1,19 @@
 package provider
 
 import (
-	"fmt"
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 
-    crypto_rand "crypto/rand"
-	"golang.org/x/crypto/nacl/box"
+	crypto_rand "crypto/rand"
 	b64 "encoding/base64"
+	"golang.org/x/crypto/nacl/box"
 )
 
 type keyPairResource struct{}
@@ -37,8 +37,8 @@ func (r *keyPairResource) Schema(_ context.Context, req resource.SchemaRequest, 
 		Attributes: map[string]schema.Attribute{
 			// Computed attributes
 			"secret_key": schema.StringAttribute{
-				Computed:            true,
-				Sensitive:           true,
+				Computed:  true,
+				Sensitive: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
@@ -46,8 +46,8 @@ func (r *keyPairResource) Schema(_ context.Context, req resource.SchemaRequest, 
 			},
 
 			"public_key": schema.StringAttribute{
-				Computed:            true,
-				Sensitive:           true,
+				Computed:  true,
+				Sensitive: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
@@ -59,7 +59,6 @@ func (r *keyPairResource) Schema(_ context.Context, req resource.SchemaRequest, 
 			"base64",
 	}
 }
-
 
 func (r *keyPairResource) Create(ctx context.Context, req resource.CreateRequest, res *resource.CreateResponse) {
 	tflog.Debug(ctx, "Creating key pair resource")
@@ -74,13 +73,13 @@ func (r *keyPairResource) Create(ctx context.Context, req resource.CreateRequest
 		"KeyConfig": fmt.Sprintf("%+v", newState),
 	})
 
-    pk, sk, err := box.GenerateKey(crypto_rand.Reader)
-    if err != nil {
-        panic(err)
-    }
+	pk, sk, err := box.GenerateKey(crypto_rand.Reader)
+	if err != nil {
+		panic(err)
+	}
 
-	newState.PublicKey =  types.StringValue(b64.StdEncoding.EncodeToString([]byte(string(pk[:]))))
-	newState.SecretKey =  types.StringValue(b64.StdEncoding.EncodeToString([]byte(string(sk[:]))))
+	newState.PublicKey = types.StringValue(b64.StdEncoding.EncodeToString([]byte(string(pk[:]))))
+	newState.SecretKey = types.StringValue(b64.StdEncoding.EncodeToString([]byte(string(sk[:]))))
 
 	// Store the model populated so far, onto the State
 	tflog.Debug(ctx, "Storing into the state")
@@ -91,8 +90,7 @@ func (r *keyPairResource) Create(ctx context.Context, req resource.CreateRequest
 }
 
 func (r *keyPairResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	return map[int64]resource.StateUpgrader{
-	}
+	return map[int64]resource.StateUpgrader{}
 }
 
 func (r *keyPairResource) Read(ctx context.Context, _ resource.ReadRequest, _ *resource.ReadResponse) {
@@ -109,8 +107,7 @@ func (r *keyPairResource) Delete(ctx context.Context, _ resource.DeleteRequest, 
 	tflog.Debug(ctx, "Removing key pair from state")
 }
 
-
 type keyPairResourceModel struct {
-	SecretKey  types.String `tfsdk:"secret_key"`
-	PublicKey  types.String `tfsdk:"public_key"`
+	SecretKey types.String `tfsdk:"secret_key"`
+	PublicKey types.String `tfsdk:"public_key"`
 }

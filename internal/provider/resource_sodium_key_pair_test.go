@@ -17,7 +17,7 @@ func TestAccExampleResource(t *testing.T) {
 			// Create and Read testing
 			{
 				Config: testAccExampleResourceConfig("one"),
-				Check: resource.ComposeAggregateTestCheckFunc(),
+				Check:  resource.ComposeAggregateTestCheckFunc(),
 			},
 			// ImportState testing
 			{
@@ -28,8 +28,7 @@ func TestAccExampleResource(t *testing.T) {
 			// Update and Read testing
 			{
 				Config: testAccExampleResourceConfig("two"),
-				Check: resource.ComposeAggregateTestCheckFunc(
-				),
+				Check:  resource.ComposeAggregateTestCheckFunc(),
 			},
 			// Delete testing automatically occurs in TestCase
 		},
