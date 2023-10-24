@@ -38,7 +38,7 @@ func TestAccExampleResource(t *testing.T) {
 }
 
 func testAccExampleResourceConfig(configurableAttribute string) string {
-	return fmt.Sprintf(`
+	return `
 resource "sodium_key_pair" "test" {}
-`, configurableAttribute)
+`
 }
